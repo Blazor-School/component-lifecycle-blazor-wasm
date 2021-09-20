@@ -1,7 +1,53 @@
-﻿@page "/lifecycle-demonstrate"
+﻿@using ComponentLifecycleBlazorWasm.TransferServices
+@page "/lifecycle-demonstrate"
+@inject LifecycleDemonstrateTransferService LifecycleDemonstrateTransferService
+@implements IDisposable
 
-<h3>LifecycleDemonstrate</h3>
+@if (DisplayChildComponent)
+{
+    <ExampleComponent></ExampleComponent>
+}
+<button @onclick="ToggleComponent">Toggle Component</button>
+
+<div class="log border-3">@((MarkupString)LifecycleDemonstrateTransferService.Log)</div>
+
+<style>
+    .method-name
+    {
+        color: #c22213;
+    }
+
+    .log
+    {
+        font-size: 20px;
+        border-color: #7b3cc3;
+    }
+</style>
 
 @code {
+    private bool DisplayChildComponent { get; set; } = false;
 
+    protected override void OnInitialized()
+    {
+        LifecycleDemonstrateTransferService.OnLogChanged += OnLogChanged;
+    }
+
+    private void OnLogChanged(object sender, string logText)
+    {
+        StateHasChanged();
+    }
+
+    private void ToggleComponent()
+    {
+        InvokeAsync(() =>
+        {
+            DisplayChildComponent = !DisplayChildComponent;
+            StateHasChanged();
+        });
+    }
+
+    public void Dispose()
+    {
+        LifecycleDemonstrateTransferService.OnLogChanged -= OnLogChanged;
+    }
 }

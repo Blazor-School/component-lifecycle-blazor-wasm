@@ -1,0 +1,56 @@
+﻿@using ComponentLifecycleBlazorWasm.TransferServices
+@using System.Runtime.CompilerServices
+@implements IDisposable
+@inject LifecycleDemonstrateTransferService LifecycleDemonstrateTransferService
+
+<h3>ExampleComponent</h3>
+
+@code {
+    private int RenderTimes = 0;
+
+    protected override void OnInitialized()
+    {
+        Logging("called", "OnInitialized");
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await InvokeAsync(() => Logging("called", "OnInitializedAsync"));
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        Logging($"called with firstRender = {firstRender}", "OnAfterRender");
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await InvokeAsync(() => Logging($"called with firstRender = {firstRender}", "OnAfterRenderAsync"));
+
+        if (RenderTimes == 0)
+        {
+            StateHasChanged();
+            RenderTimes++;
+        }
+    }
+
+    protected override void OnParametersSet()
+    {
+        Logging("called", "OnParametersSet");
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await InvokeAsync(() => Logging("called", "OnParametersSetAsync"));
+    }
+
+    public void Dispose()
+    {
+        Logging("called", "Dispose");
+    }
+
+    private void Logging(string logText, [CallerMemberName] string callFrom = null)
+    {
+        LifecycleDemonstrateTransferService.Log += $"<div><span class=\"method-name\">{callFrom}</span> {logText}</div>";
+    }
+}

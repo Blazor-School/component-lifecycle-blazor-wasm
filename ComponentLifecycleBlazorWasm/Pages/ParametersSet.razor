@@ -1,0 +1,28 @@
+﻿@using ComponentLifecycleBlazorWasm.Models
+@page "/parameters-set"
+
+@foreach (var company in Companies)
+{
+    <CompanyDetail Company="company"></CompanyDetail>
+}
+<button class="btn btn-primary" @onclick="UpdateCompanyName">Update Company Name</button>
+
+@code {
+    private List<Company> Companies { get; set; } = new()
+    {
+        new()
+        {
+            Name = "DotNetPro"
+        },
+        new()
+        {
+            Name = "Microsoft"
+        }
+    };
+
+    private void UpdateCompanyName()
+    {
+        Companies[0].Name = "DotNetPro Technology";
+        Companies[1].Name = "Microsoft Corporation";
+    }
+}

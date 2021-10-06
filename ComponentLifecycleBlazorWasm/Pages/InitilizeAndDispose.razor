@@ -1,0 +1,36 @@
+﻿@using ComponentLifecycleBlazorWasm.Models
+@page "/initialize-and-dispose"
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient 
+@implements IDisposable
+
+<h3>Initilize and Dispose</h3>
+<div>Post title: @ProductName</div>
+<div>Company Name: @Company.Name</div>
+
+@code {
+    public Company Company { get; set; } = new();
+    public string ProductName { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("alert", "Blazor School");
+        Company = new()
+        {
+            Name = "DotNetPro"
+        };
+        NavigationManager.LocationChanged += OnLocationChanged;
+        ProductName = await HttpClient.GetStringAsync("/sample-data/product.txt");
+    }
+
+    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        InvokeAsync(async () => await JSRuntime.InvokeVoidAsync("alert", "ALWAYS remember to dispose when you register an event"));
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}

@@ -1,0 +1,14 @@
+﻿@using ComponentLifecycleBlazorWasm.Models
+@inject IJSRuntime JSRuntime 
+
+<h3>@Company.Name</h3>
+
+@code {
+    [Parameter]
+    public Company Company { get; set; }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await JSRuntime.InvokeVoidAsync("alert", "Parent changes values");
+    }
+}
